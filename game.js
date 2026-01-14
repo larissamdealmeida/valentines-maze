@@ -1,6 +1,3 @@
-// --- Retro maze game with guaranteed solvable maze ---
-// Perfect maze generation (DFS/backtracking) on an odd-sized grid.
-
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -12,35 +9,30 @@ const closeBtn = document.getElementById("closeBtn");
 const codeBox = document.getElementById("codeBox");
 const newMazeBtn = document.getElementById("newMazeBtn");
 
-// --- Put your real KeyForge code here ---
+// Put your real KeyForge code here:
 const KEYFORGE_CODE = "PASTE-YOUR-REAL-CODE-HERE";
+const SECRET_PHRASE = "i choose you"; // change to your phrase
 
-// Optional phrase-gate (prevents casual “view-source” spoiling)
-const SECRET_PHRASE = "i choose you"; // change to your inside joke
+// Game Boy palette
+const GB0 = "#0f380f";
+const GB1 = "#306230";
+const GB2 = "#8bac0f";
+const GB3 = "#9bbc0f";
 
-// --- Maze settings ---
-const GRID = 41; // MUST be odd for perfect mazes (e.g., 31, 41, 51)
-const TILE = Math.floor(canvas.width / GRID); // auto tilesize
-canvas.height = canvas.width; // keep square
+// Internal resolution 160x144.
+// We’ll use 8x8 tiles so grid = 19x17 tiles (152x136) with a small border.
+const TILE = 8;
+const GRID_W = 19; // odd
+const GRID_H = 17; // odd
+const OFF_X = 4;   // border
+const OFF_Y = 4;
 
-// Tile types: 0 path, 1 wall
 let maze = [];
 let player = { x: 1, y: 1 };
-let goal = { x: GRID - 2, y: GRID - 2 };
-
-// Pokémon-ish colors (match CSS vibe)
-const COLORS = {
-  grass1: "#2fa44f",
-  grass2: "#2b9348",
-  path1:  "#b07a3a",
-  path2:  "#9a6a33",
-  tree1:  "#0a2a14",
-  tree2:  "#0f3a1e",
-  shade:  "rgba(0,0,0,0.20)"
-};
+let goal = { x: GRID_W - 2, y: GRID_H - 2 };
 
 function randInt(n){ return Math.floor(Math.random() * n); }
-function inBounds(x,y){ return x >= 0 && y >= 0 && x < GRID && y < GRID; }
+function inBounds(x,y){ return x >= 0 && y >= 0 && x < GRID_W && y < GRID_H; }
 
 function shuffle(arr){
   for(let i = arr.length - 1; i > 0; i--){
@@ -50,11 +42,11 @@ function shuffle(arr){
   return arr;
 }
 
+// Perfect maze via DFS carving.
+// 1 = wall, 0 = path
 function generateMaze(){
-  // Start with all walls
-  maze = Array.from({length: GRID}, () => Array(GRID).fill(1));
+  maze = Array.from({length: GRID_H}, () => Array(GRID_W).fill(1));
 
-  // Carve passages on odd coordinates
   const stack = [];
   const start = { x: 1, y: 1 };
   maze[start.y][start.x] = 0;
@@ -75,7 +67,11 @@ function generateMaze(){
       const nx = cur.x + d.dx;
       const ny = cur.y + d.dy;
       if(inBounds(nx,ny) && maze[ny][nx] === 1){
-        options.push({ nx, ny, wx: cur.x + d.dx/2, wy: cur.y + d.dy/2 });
+        options.push({
+          nx, ny,
+          wx: cur.x + d.dx/2,
+          wy: cur.y + d.dy/2
+        });
       }
     }
 
@@ -83,23 +79,18 @@ function generateMaze(){
       stack.pop();
     } else {
       const pick = shuffle(options)[0];
-      // carve wall between
-      maze[pick.wy][pick.wx] = 0;
-      // carve next cell
-      maze[pick.ny][pick.nx] = 0;
+      maze[pick.wy][pick.wx] = 0; // carve between
+      maze[pick.ny][pick.nx] = 0; // carve next
       stack.push({ x: pick.nx, y: pick.ny });
     }
   }
 
-  // Place player + goal on guaranteed-open tiles
+  // Ensure start/goal are open
   player = { x: 1, y: 1 };
-
-  // pick a far-ish open cell for goal
-  // simplest: bottom-right odd cell (will be open in perfect maze)
-  goal = { x: GRID - 2, y: GRID - 2 };
+  goal = { x: GRID_W - 2, y: GRID_H - 2 };
   maze[goal.y][goal.x] = 0;
 
-  statusEl.textContent = "A wild maze appeared!";
+  statusEl.textContent = "A WILD MAZE APPEARED!";
   draw();
 }
 
@@ -107,59 +98,90 @@ function isWall(x,y){
   return !inBounds(x,y) || maze[y][x] === 1;
 }
 
+// --- Drawing helpers (GB style) ---
+function fillRect(x,y,w,h,color){
+  ctx.fillStyle = color;
+  ctx.fillRect(x,y,w,h);
+}
+
 function drawTile(x,y){
-  // Grass background everywhere
-  const grass = ((x + y) % 2 === 0) ? COLORS.grass1 : COLORS.grass2;
-  ctx.fillStyle = grass;
-  ctx.fillRect(x*TILE, y*TILE, TILE, TILE);
+  const px = OFF_X + x*TILE;
+  const py = OFF_Y + y*TILE;
 
-  if(maze[y][x] === 0){
-    // Path tile
-    ctx.fillStyle = ((x + y) % 2 === 0) ? COLORS.path1 : COLORS.path2;
-    ctx.fillRect(x*TILE, y*TILE, TILE, TILE);
+  // background (light)
+  fillRect(px, py, TILE, TILE, GB3);
 
-    // tiny “texture” dots
-    ctx.fillStyle = "rgba(255,255,255,0.06)";
-    if((x*y) % 7 === 0) ctx.fillRect(x*TILE + 2, y*TILE + 2, 2, 2);
+  if(maze[y][x] === 1){
+    // wall tile: dark blocks with a highlight edge
+    fillRect(px, py, TILE, TILE, GB1);
+    fillRect(px, py, TILE, 1, GB2);
+    fillRect(px, py, 1, TILE, GB2);
+    fillRect(px+1, py+1, TILE-2, TILE-2, GB0);
   } else {
-    // Wall tile (trees/rocks feel)
-    ctx.fillStyle = ((x + y) % 2 === 0) ? COLORS.tree1 : COLORS.tree2;
-    ctx.fillRect(x*TILE, y*TILE, TILE, TILE);
-
-    // add edge shading for depth
-    ctx.fillStyle = COLORS.shade;
-    ctx.fillRect(x*TILE, y*TILE, TILE, 3);
-    ctx.fillRect(x*TILE, y*TILE, 3, TILE);
+    // path tile: mid with subtle noise
+    fillRect(px, py, TILE, TILE, GB2);
+    if((x*y) % 5 === 0) fillRect(px+2, py+3, 1, 1, GB3);
+    if((x+y) % 7 === 0) fillRect(px+5, py+2, 1, 1, GB3);
   }
 }
 
-function drawEmoji(emoji, x, y){
-  ctx.font = `${Math.max(10, TILE)}px system-ui, Apple Color Emoji, Segoe UI Emoji`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(emoji, x*TILE + TILE/2, y*TILE + TILE/2 + 1);
+function drawPlayer(){
+  const px = OFF_X + player.x*TILE;
+  const py = OFF_Y + player.y*TILE;
+
+  // 8x8 “trainer” sprite (very simple)
+  fillRect(px+3, py+1, 2, 1, GB0); // hair
+  fillRect(px+2, py+2, 4, 2, GB0); // head
+  fillRect(px+2, py+4, 4, 2, GB1); // body
+  fillRect(px+2, py+6, 2, 1, GB0); // legs
+  fillRect(px+4, py+6, 2, 1, GB0);
+
+  // tiny shine
+  fillRect(px+3, py+3, 1, 1, GB3);
+}
+
+function drawHeart(){
+  const px = OFF_X + goal.x*TILE;
+  const py = OFF_Y + goal.y*TILE;
+
+  // 8x8 pixel heart
+  // using GB0/GB1 to stand out
+  fillRect(px+2, py+2, 1, 1, GB0);
+  fillRect(px+5, py+2, 1, 1, GB0);
+  fillRect(px+1, py+3, 2, 1, GB0);
+  fillRect(px+4, py+3, 3, 1, GB0);
+  fillRect(px+1, py+4, 6, 1, GB0);
+  fillRect(px+2, py+5, 4, 1, GB0);
+  fillRect(px+3, py+6, 2, 1, GB0);
+
+  // highlight
+  fillRect(px+2, py+3, 1, 1, GB3);
 }
 
 function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Clear screen
+  fillRect(0,0,canvas.width,canvas.height,GB0);
 
-  // draw map
-  for(let y=0; y<GRID; y++){
-    for(let x=0; x<GRID; x++){
+  // frame background
+  fillRect(2,2,canvas.width-4,canvas.height-4,GB1);
+
+  // playfield
+  fillRect(OFF_X-1, OFF_Y-1, GRID_W*TILE+2, GRID_H*TILE+2, GB0);
+
+  for(let y=0; y<GRID_H; y++){
+    for(let x=0; x<GRID_W; x++){
       drawTile(x,y);
     }
   }
 
-  // draw goal + player
-  drawEmoji("❤️", goal.x, goal.y);
-  drawEmoji("🙂", player.x, player.y);
+  drawHeart();
+  drawPlayer();
 
-  // subtle vignette for “route” vibe
-  const g = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.width*0.2, canvas.width/2, canvas.height/2, canvas.width*0.75);
-  g.addColorStop(0, "rgba(0,0,0,0)");
-  g.addColorStop(1, "rgba(0,0,0,0.25)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  // tiny “scanlines” for GB vibe (subtle)
+  ctx.fillStyle = "rgba(0,0,0,0.06)";
+  for(let y=0; y<canvas.height; y+=2){
+    ctx.fillRect(0,y,canvas.width,1);
+  }
 }
 
 function tryMove(dx,dy){
@@ -171,10 +193,10 @@ function tryMove(dx,dy){
   player.y = ny;
 
   if(player.x === goal.x && player.y === goal.y){
-    statusEl.textContent = "You found me! 💖";
+    statusEl.textContent = "YOU FOUND ME!";
     openWin();
   } else {
-    statusEl.textContent = "Keep going…";
+    statusEl.textContent = "KEEP GOING…";
   }
   draw();
 }
@@ -190,27 +212,27 @@ window.addEventListener("keydown", (e) => {
   if(winDialog.open) return;
 
   const k = e.key.toLowerCase();
-  const fast = e.shiftKey ? 2 : 1; // shift = move 2 tiles per keypress
+  const fast = e.shiftKey ? 2 : 1;
 
-  if(k === "arrowup" || k === "w") for(let i=0;i<fast;i++) tryMove(0,-1);
-  if(k === "arrowdown" || k === "s") for(let i=0;i<fast;i++) tryMove(0, 1);
-  if(k === "arrowleft" || k === "a") for(let i=0;i<fast;i++) tryMove(-1,0);
-  if(k === "arrowright" || k === "d") for(let i=0;i<fast;i++) tryMove(1,0);
+  const move = (dx,dy) => { for(let i=0;i<fast;i++) tryMove(dx,dy); };
+
+  if(k === "arrowup" || k === "w") move(0,-1);
+  if(k === "arrowdown" || k === "s") move(0, 1);
+  if(k === "arrowleft" || k === "a") move(-1,0);
+  if(k === "arrowright" || k === "d") move(1,0);
 });
 
 revealBtn.addEventListener("click", () => {
   const guess = (phraseInput.value || "").trim().toLowerCase();
   codeBox.classList.remove("hidden");
-
   if(guess !== SECRET_PHRASE){
-    codeBox.textContent = "Nope 😈 Try the phrase again.";
+    codeBox.textContent = "NOPE. TRY AGAIN 😈";
     return;
   }
-  codeBox.textContent = `Your KeyForge code: ${KEYFORGE_CODE}`;
+  codeBox.textContent = `KEYFORGE CODE: ${KEYFORGE_CODE}`;
 });
 
 closeBtn.addEventListener("click", () => winDialog.close());
 newMazeBtn.addEventListener("click", () => generateMaze());
 
-// First load
 generateMaze();
