@@ -1,97 +1,91 @@
 :root{
-  --bg:#071017;
-  --card:#0b1823;
-  --text:#e6edf3;
-  --muted:#9fb2c7;
-
-  /* Pokémon-ish palette */
-  --grass1:#2fa44f;
-  --grass2:#2b9348;
-  --path1:#b07a3a;
-  --path2:#9a6a33;
-  --tree1:#0a2a14;
-  --tree2:#0f3a1e;
-
-  --ui:#0f2433;
-  --ui2:#18354a;
-  --accent:#ffd34a;
-  --pink:#ff4d8d;
+  /* Game Boy palette (classic green) */
+  --gb0:#0f380f;  /* darkest */
+  --gb1:#306230;
+  --gb2:#8bac0f;
+  --gb3:#9bbc0f;  /* lightest */
 }
 
 *{ box-sizing:border-box; }
 
 body{
   margin:0;
-  background: radial-gradient(1100px 700px at 20% 10%, #132b3e, var(--bg));
-  color:var(--text);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: radial-gradient(900px 500px at 20% 10%, #1a2a1a, #081008);
+  color: var(--gb3);
+  font-family: "Press Start 2P", system-ui;
 }
 
-.wrap{ max-width: 980px; margin: 0 auto; padding: 24px; }
+.wrap{ max-width: 900px; margin: 0 auto; padding: 24px; }
 
 .top h1{
-  margin:0 0 10px;
-  font-family: "Press Start 2P", system-ui;
+  margin: 0 0 10px;
   font-size: 22px;
-  line-height: 1.25;
-  text-shadow: 0 2px 0 rgba(0,0,0,.35);
+  letter-spacing: 1px;
+  color: var(--gb3);
+  text-shadow: 0 2px 0 rgba(0,0,0,.4);
 }
-.sub{ margin:0 0 18px; color:var(--muted); }
-.spark{ filter: drop-shadow(0 2px 8px rgba(255,77,141,.25)); }
-.heart{ filter: drop-shadow(0 2px 8px rgba(255,77,141,.35)); }
+.sub{
+  margin:0 0 16px;
+  font-size: 10px;
+  color: var(--gb2);
+  line-height: 1.6;
+}
 
 .panel{
-  background: rgba(11,24,35,.92);
-  border: 2px solid rgba(255,255,255,.10);
-  border-radius: 18px;
+  border: 4px solid var(--gb1);
+  background: rgba(15,56,15,.35);
+  border-radius: 14px;
   padding: 14px;
-  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+  box-shadow: 0 24px 70px rgba(0,0,0,.5);
 }
 
 .toolbar{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap: 12px;
+  align-items:center;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
 .btn{
   font-family: "Press Start 2P", system-ui;
-  font-size: 12px;
+  font-size: 10px;
   padding: 10px 12px;
+  border: 3px solid var(--gb1);
   border-radius: 12px;
-  border: 2px solid rgba(255,255,255,.12);
-  background: linear-gradient(180deg, var(--ui2), var(--ui));
-  color: var(--text);
+  background: var(--gb2);
+  color: var(--gb0);
   cursor:pointer;
 }
-.btn:hover{ border-color: rgba(255,255,255,.22); }
 .btn.secondary{
-  background: rgba(255,255,255,.06);
+  background: transparent;
+  color: var(--gb3);
 }
 
 .hint{
-  color: var(--muted);
-  font-size: 13px;
+  font-size: 9px;
+  color: var(--gb2);
 }
+
 kbd{
   padding: 2px 6px;
-  border-radius: 6px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 12px;
+  border: 2px solid var(--gb1);
+  border-radius: 8px;
+  background: rgba(155,188,15,.15);
+  font-size: 9px;
 }
 
 canvas{
-  width: 100%;
+  /* Scale up Game Boy resolution */
+  width: min(720px, 100%);
   height: auto;
   display:block;
-  border-radius: 14px;
-  border: 2px solid rgba(255,255,255,.08);
+  margin: 0 auto;
+  border: 4px solid var(--gb1);
+  border-radius: 12px;
+  background: var(--gb3);
 
-  /* This is key for “pixel art” crispness */
+  /* CRISP PIXELS */
   image-rendering: pixelated;
 }
 
@@ -99,46 +93,45 @@ canvas{
   margin-top: 10px;
   display:flex;
   justify-content:space-between;
-  gap: 14px;
   flex-wrap: wrap;
-  align-items:center;
+  gap: 10px;
+  font-size: 9px;
+  color: var(--gb2);
+  line-height: 1.6;
 }
-.status{ color: var(--accent); }
+.status{ color: var(--gb3); }
 
 dialog{
-  border: 2px solid rgba(255,255,255,.12);
-  border-radius: 16px;
-  padding: 18px;
-  background: var(--card);
-  color: var(--text);
+  border: 4px solid var(--gb1);
+  background: #0a1d0a;
+  color: var(--gb3);
+  border-radius: 14px;
+  padding: 14px;
   width: min(560px, 92vw);
 }
 dialog::backdrop{ background: rgba(0,0,0,.65); }
-dialog h2{
-  margin: 0 0 10px;
-  font-family: "Press Start 2P", system-ui;
-  font-size: 16px;
-}
+dialog h2{ margin: 0 0 10px; font-size: 14px; }
+
 input{
   width:100%;
-  margin: 10px 0 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 2px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.06);
-  color: var(--text);
+  padding: 10px 10px;
+  border-radius: 10px;
+  border: 3px solid var(--gb1);
+  background: rgba(155,188,15,.12);
+  color: var(--gb3);
+  font-family: "Press Start 2P", system-ui;
+  font-size: 10px;
 }
-.row{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+.row{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 
 .code{
   margin-top: 12px;
-  padding: 10px 12px;
+  padding: 10px;
+  border: 3px dashed var(--gb1);
   border-radius: 12px;
-  background: rgba(0,0,0,.35);
-  border: 2px dashed rgba(255,255,255,.20);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  background: rgba(155,188,15,.08);
+  font-size: 10px;
+  line-height: 1.6;
 }
 .hidden{ display:none; }
-.tiny{ color: var(--muted); font-size: 12px; margin: 12px 0 0; }
-
-.foot{ margin-top: 14px; color: var(--muted); }
