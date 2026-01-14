@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Me 💘</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <h1>Find me in the maze 💘</h1>
+      <p class="sub">Move with Arrow Keys or WASD. Reach ❤️ to win.</p>
+    </header>
+
+    <section class="panel">
+      <canvas id="game" width="640" height="640" aria-label="Maze game"></canvas>
+      <div class="hud">
+        <div><strong>Legend:</strong> 🧱 wall · 🟩 path · 🙂 you · ❤️ me</div>
+        <div id="status" class="status">Good luck 😈</div>
+      </div>
+    </section>
+
+    <dialog id="winDialog">
+      <h2>You found me! 🥹💖</h2>
+      <p>Type the secret phrase to reveal your KeyForge deck code:</p>
+      <input id="phrase" type="text" placeholder="e.g., I choose you" autocomplete="off" />
+      <button id="revealBtn">Reveal code</button>
+      <p id="codeBox" class="code hidden"></p>
+      <button id="closeBtn" class="secondary">Close</button>
+    </dialog>
+
+    <footer class="foot">
+      <small>Tip: If the maze is too hard, I can make it easier 😇</small>
+    </footer>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
