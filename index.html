@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Find Me 💘</title>
 
-  <!-- Pixel-ish font (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -15,23 +14,37 @@
 <body>
   <main class="wrap">
     <header class="top">
-      <h1>Find me in the maze <span class="spark">💘</span></h1>
-      <p class="sub">Move with Arrow Keys or WASD. Reach <span class="heart">❤️</span> to win.</p>
+      <h1>FIND ME 💘</h1>
+      <p class="sub">Arrow Keys / WASD • Reach the heart to win</p>
     </header>
 
     <section class="panel">
       <div class="toolbar">
-        <button id="newMazeBtn" class="btn">New Maze</button>
-        <div class="hint">Tip: Hold <kbd>Shift</kbd> to move faster.</div>
+        <button id="newMazeBtn" class="btn">NEW MAZE</button>
+        <div class="hint">Hold <kbd>Shift</kbd> to dash</div>
       </div>
 
-      <canvas id="game" width="640" height="640" aria-label="Maze game"></canvas>
+      <!-- Internal resolution is true Game Boy -->
+      <canvas id="game" width="160" height="144"></canvas>
 
       <div class="hud">
-        <div><strong>Legend:</strong> 🙂 you · ❤️ me · 🌿 grass · 🟫 path</div>
-        <div id="status" class="status">Good luck 😈</div>
+        <div><strong>YOU</strong> = little sprite • <strong>ME</strong> = heart</div>
+        <div id="status" class="status">A WILD MAZE APPEARED!</div>
       </div>
     </section>
 
     <dialog id="winDialog">
-      <h2>You found me! 💖</h2
+      <h2>YOU FOUND ME 💖</h2>
+      <p>Type the secret phrase to reveal your KeyForge code:</p>
+      <input id="phrase" type="text" placeholder="e.g. i choose you" autocomplete="off" />
+      <div class="row">
+        <button id="revealBtn" class="btn">REVEAL</button>
+        <button id="closeBtn" class="btn secondary">CLOSE</button>
+      </div>
+      <p id="codeBox" class="code hidden"></p>
+    </dialog>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
