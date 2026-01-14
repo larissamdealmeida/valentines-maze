@@ -11,7 +11,7 @@ const newMazeBtn = document.getElementById("newMazeBtn");
 
 // Put your real KeyForge code here:
 const KEYFORGE_CODE = "PASTE-YOUR-REAL-CODE-HERE";
-const SECRET_PHRASE = "i choose you";
+const SECRET_PHRASE = "feet420";
 
 // --- Maze size + tile size ---
 // 41x41 fits perfectly with 16px tiles: 41*16 = 656
@@ -38,11 +38,14 @@ const PAL = {
   pathB: "#8fd3a6",
   pathSpeck: "rgba(255,255,255,0.10)",
 
-  treeTop: "#2f7a44",
-  treeMid: "#2b6f3f",
-  treeDark: "#225b33",
-  treeEdge: "#8be0a7",
+  // Tree colors (richer + more depth)
+  treeEdge: "#a7f0bf",
+  treeLeaf1: "#3aa85f",
+  treeLeaf2: "#2f8f52",
+  treeLeaf3: "#257344",
   treeShadow: "rgba(0,0,0,0.22)",
+  treeTrunk: "#7a5a3a",
+  treeTrunkDark: "#5f442c",
 
   flowerWhite: "rgba(255,255,255,0.38)",
   flowerPink: "rgba(255,80,120,0.60)",
@@ -117,7 +120,7 @@ function generateMaze(){
   goal = { x: GRID - 2, y: GRID - 2 };
   maze[goal.y][goal.x] = 0;
 
-  statusEl.textContent = "Find me… 💘";
+  statusEl.textContent = "Find me… 🖤";
   draw();
 }
 
@@ -155,13 +158,30 @@ function wallNeighborsMask(gx, gy){
   return up | right | down | left;
 }
 
-function drawTreeWall(px, py, neighborsMask){
-  fillRect(px, py, TILE, TILE, PAL.treeMid);
-  ctx.fillStyle = PAL.treeTop;
-  ctx.fillRect(px, py, TILE, 6);
-  fillRect(px+2, py+3, TILE-4, TILE-5, PAL.treeDark);
+// Make walls look more like trees: dense canopy + border highlights + trunk hints
+function drawTreeWall(px, py, neighborsMask, seed){
+  // Underpaint (deep leaf)
+  fillRect(px, py, TILE, TILE, PAL.treeLeaf3);
 
-  // edge highlight like Pokémon tree borders
+  // Canopy blobs
+  fillRect(px, py, TILE, 7, PAL.treeLeaf1);
+  fillRect(px+1, py+6, TILE-2, 8, PAL.treeLeaf2);
+
+  // Leaf “noise” (pixel clusters)
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  if(seed % 3 === 0) ctx.fillRect(px+4, py+4, 2, 1);
+  if(seed % 5 === 0) ctx.fillRect(px+10, py+5, 1, 2);
+  if(seed % 7 === 0) ctx.fillRect(px+6, py+9, 2, 1);
+
+  // Trunk hint (rare, gives more “tree” feel)
+  if(seed % 9 === 0){
+    ctx.fillStyle = PAL.treeTrunkDark;
+    ctx.fillRect(px+7, py+11, 2, 4);
+    ctx.fillStyle = PAL.treeTrunk;
+    ctx.fillRect(px+7, py+11, 1, 4);
+  }
+
+  // Edge highlight where adjacent is NOT a wall (like route tree borders)
   ctx.fillStyle = PAL.treeEdge;
   const topOpen = !(neighborsMask & 1);
   const rightOpen = !(neighborsMask & 2);
@@ -173,17 +193,10 @@ function drawTreeWall(px, py, neighborsMask){
   if(rightOpen) ctx.fillRect(px+TILE-2, py+2, 2, TILE-4);
   if(bottomOpen) ctx.fillRect(px+2, py+TILE-2, TILE-4, 2);
 
-  // shadow
+  // Shadow for depth
   ctx.fillStyle = PAL.treeShadow;
   ctx.fillRect(px, py+TILE-2, TILE, 2);
   ctx.fillRect(px+TILE-2, py, 2, TILE);
-
-  // extra “leaf clusters” sometimes
-  const s = (px + py) & 31;
-  if(s === 0){
-    ctx.fillStyle = "rgba(255,255,255,0.10)";
-    ctx.fillRect(px+4, py+4, 2, 2);
-  }
 }
 
 function drawFlowers(px, py, seed){
@@ -208,119 +221,179 @@ function drawHouse(px, py, variant = 0){
   const window = "#78bfe2";
   const outline = "rgba(0,0,0,0.25)";
 
+  // outline-ish shadow
   ctx.fillStyle = outline; ctx.fillRect(px, py+1, 16, 15);
 
+  // roof
   ctx.fillStyle = roof;     ctx.fillRect(px+2, py+2, 12, 5);
   ctx.fillStyle = roofDark; ctx.fillRect(px+2, py+6, 12, 1);
 
+  // walls
   ctx.fillStyle = wall;     ctx.fillRect(px+3, py+7, 10, 7);
   ctx.fillStyle = wallDark; ctx.fillRect(px+3, py+13, 10, 1);
 
+  // door + window
   ctx.fillStyle = door;     ctx.fillRect(px+7, py+10, 2, 4);
   ctx.fillStyle = window;   ctx.fillRect(px+4, py+9, 2, 2);
   ctx.fillStyle = "rgba(255,255,255,0.45)"; ctx.fillRect(px+4, py+9, 1, 1);
 }
 
-// ---------- Sprites ----------
-function drawPlayerSprite(px, py, frame){
-  // 16x16 sprite: glasses + light beard + light brown hair + gray shirt (your boyfriend cues)
+// ---------- Bigger sprites (drawn larger than one tile) ----------
+function drawPlayerSpriteBig(tileX, tileY, frame){
+  // Draw a 24x24 sprite centered on a tile (overhangs like Pokémon)
+  const px = tileX * TILE + (TILE/2) - 12;
+  const py = tileY * TILE + (TILE/2) - 18; // slightly above center for “head room”
+
+  // Simple 24x24: glasses + light beard + light brown hair + gray shirt
   const c = {
-    outline: "#1b1b1b",
+    outline: "#151515",
     skin: "#f2c7a3",
     hair: "#b98b5e",
     beard: "#a67b55",
-    glasses: "#2a2a2a",
-    shirt: "#bdbdbd",
-    pants: "#1f1f1f",
-    shoe: "#0f0f0f",
+    glasses: "#202020",
+    shirt: "#c6c6c6",
+    pants: "#1c1c1c",
+    shoe: "#0c0c0c",
     hi: "rgba(255,255,255,0.35)"
   };
 
-  // shadow
-  ctx.fillStyle = "rgba(0,0,0,0.14)";
-  ctx.fillRect(px+4, py+13, 8, 2);
+  // shadow on ground
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
+  ctx.fillRect(px+6, py+20, 12, 3);
 
   // head outline
   ctx.fillStyle = c.outline;
-  ctx.fillRect(px+6, py+2, 4, 1);
-  ctx.fillRect(px+5, py+3, 6, 1);
-  ctx.fillRect(px+5, py+4, 6, 4);
-  ctx.fillRect(px+6, py+8, 4, 1);
+  ctx.fillRect(px+9, py+3, 6, 1);
+  ctx.fillRect(px+8, py+4, 8, 1);
+  ctx.fillRect(px+8, py+5, 8, 7);
+  ctx.fillRect(px+9, py+12, 6, 1);
 
   // hair
   ctx.fillStyle = c.hair;
-  ctx.fillRect(px+6, py+3, 4, 2);
-  ctx.fillRect(px+5, py+4, 1, 1);
-  ctx.fillRect(px+10, py+4, 1, 1);
+  ctx.fillRect(px+9, py+4, 6, 3);
+  ctx.fillRect(px+8, py+5, 1, 2);
+  ctx.fillRect(px+15, py+5, 1, 2);
 
   // face
   ctx.fillStyle = c.skin;
-  ctx.fillRect(px+6, py+5, 4, 2);
+  ctx.fillRect(px+9, py+8, 6, 3);
 
   // glasses
   ctx.fillStyle = c.glasses;
-  ctx.fillRect(px+6, py+5, 1, 1);
-  ctx.fillRect(px+9, py+5, 1, 1);
-  ctx.fillRect(px+7, py+5, 2, 1);
+  ctx.fillRect(px+9, py+9, 2, 1);
+  ctx.fillRect(px+13, py+9, 2, 1);
+  ctx.fillRect(px+11, py+9, 2, 1);
 
   // beard
   ctx.fillStyle = c.beard;
-  ctx.fillRect(px+6, py+7, 4, 1);
+  ctx.fillRect(px+9, py+11, 6, 1);
 
   // torso outline
   ctx.fillStyle = c.outline;
-  ctx.fillRect(px+5, py+9, 6, 1);
-  ctx.fillRect(px+5, py+10, 6, 3);
+  ctx.fillRect(px+8, py+14, 8, 1);
+  ctx.fillRect(px+8, py+15, 8, 6);
 
   // shirt
   ctx.fillStyle = c.shirt;
-  ctx.fillRect(px+6, py+10, 4, 3);
+  ctx.fillRect(px+9, py+15, 6, 6);
   ctx.fillStyle = c.hi;
-  ctx.fillRect(px+7, py+11, 1, 1);
+  ctx.fillRect(px+11, py+17, 2, 1);
 
   // legs (step anim)
   ctx.fillStyle = c.pants;
   if(frame % 2 === 0){
-    ctx.fillRect(px+6, py+13, 2, 2);
-    ctx.fillRect(px+8, py+14, 2, 1);
+    ctx.fillRect(px+9,  py+21, 3, 2);
+    ctx.fillRect(px+13, py+22, 3, 1);
   } else {
-    ctx.fillRect(px+6, py+14, 2, 1);
-    ctx.fillRect(px+8, py+13, 2, 2);
+    ctx.fillRect(px+9,  py+22, 3, 1);
+    ctx.fillRect(px+13, py+21, 3, 2);
   }
 
   // shoes
   ctx.fillStyle = c.shoe;
-  ctx.fillRect(px+6, py+15, 2, 1);
-  ctx.fillRect(px+8, py+15, 2, 1);
+  ctx.fillRect(px+9,  py+23, 3, 1);
+  ctx.fillRect(px+13, py+23, 3, 1);
 }
 
-function drawHeartSprite(px, py){
-  const red = "#d93a3a";
-  const dark = "#8f1f1f";
-  const hi = "#ff9aa6";
+function drawGothGirlBig(tileX, tileY, frame){
+  // 24x24 goth-ish girl sprite: dark hair, eyeliner vibe, black/purple outfit
+  const px = tileX * TILE + (TILE/2) - 12;
+  const py = tileY * TILE + (TILE/2) - 18;
 
-  ctx.fillStyle = dark;
-  ctx.fillRect(px+6, py+5, 4, 1);
-  ctx.fillRect(px+5, py+6, 6, 1);
-  ctx.fillRect(px+5, py+7, 6, 1);
-  ctx.fillRect(px+6, py+8, 4, 1);
-  ctx.fillRect(px+7, py+9, 2, 1);
+  const c = {
+    outline: "#131313",
+    skin: "#f0c6b2",
+    hair: "#1a1a1a",
+    hairHi: "#3b2a4a",   // purple sheen
+    dress: "#1c1c24",
+    dress2: "#3a2a52",
+    boots: "#0a0a0f",
+    hi: "rgba(255,255,255,0.28)"
+  };
 
-  ctx.fillStyle = red;
-  ctx.fillRect(px+6, py+4, 2, 2);
-  ctx.fillRect(px+8, py+4, 2, 2);
-  ctx.fillRect(px+5, py+6, 6, 2);
-  ctx.fillRect(px+6, py+8, 4, 1);
-  ctx.fillRect(px+7, py+9, 2, 1);
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
+  ctx.fillRect(px+6, py+20, 12, 3);
 
-  ctx.fillStyle = hi;
-  ctx.fillRect(px+6, py+5, 1, 1);
-  ctx.fillRect(px+6, py+7, 1, 1);
+  // head outline
+  ctx.fillStyle = c.outline;
+  ctx.fillRect(px+9, py+3, 6, 1);
+  ctx.fillRect(px+8, py+4, 8, 1);
+  ctx.fillRect(px+8, py+5, 8, 7);
+  ctx.fillRect(px+9, py+12, 6, 1);
+
+  // hair (big dark cap + side strands)
+  ctx.fillStyle = c.hair;
+  ctx.fillRect(px+8, py+4, 8, 6);
+  ctx.fillRect(px+7, py+7, 2, 6);
+  ctx.fillRect(px+15, py+7, 2, 6);
+
+  // hair highlight
+  ctx.fillStyle = c.hairHi;
+  ctx.fillRect(px+10, py+6, 2, 1);
+  ctx.fillRect(px+12, py+7, 1, 1);
+
+  // face
+  ctx.fillStyle = c.skin;
+  ctx.fillRect(px+9, py+9, 6, 2);
+
+  // “eyes” / eyeliner dot
+  ctx.fillStyle = c.outline;
+  ctx.fillRect(px+10, py+9, 1, 1);
+  ctx.fillRect(px+13, py+9, 1, 1);
+
+  // torso outline
+  ctx.fillStyle = c.outline;
+  ctx.fillRect(px+8, py+14, 8, 1);
+  ctx.fillRect(px+8, py+15, 8, 6);
+
+  // dress
+  ctx.fillStyle = c.dress;
+  ctx.fillRect(px+9, py+15, 6, 6);
+
+  // accent (purple belt-ish)
+  ctx.fillStyle = c.dress2;
+  ctx.fillRect(px+9, py+17, 6, 1);
+
+  // highlight
+  ctx.fillStyle = c.hi;
+  ctx.fillRect(px+10, py+16, 1, 1);
+
+  // legs / boots (tiny step)
+  ctx.fillStyle = c.boots;
+  if(frame % 2 === 0){
+    ctx.fillRect(px+9,  py+21, 3, 2);
+    ctx.fillRect(px+13, py+22, 3, 1);
+  } else {
+    ctx.fillRect(px+9,  py+22, 3, 1);
+    ctx.fillRect(px+13, py+21, 3, 2);
+  }
+  ctx.fillRect(px+9,  py+23, 3, 1);
+  ctx.fillRect(px+13, py+23, 3, 1);
 }
 
 // ---------- Draw entire maze ----------
 function draw(){
-  // full render: player never leaves view
   for(let y=0; y<GRID; y++){
     for(let x=0; x<GRID; x++){
       const px = x * TILE;
@@ -328,12 +401,17 @@ function draw(){
       const seed = hash2(x, y);
 
       if(maze[y][x] === 1){
+        // Under-grass under trees like Pokémon routes
         drawGrassTile(px, py, seed);
-        drawTreeWall(px, py, wallNeighborsMask(x, y));
 
-        // houses: rare and mostly near edges
-        const nearEdge = x < 5 || y < 5 || x > GRID - 6 || y > GRID - 6;
-        if(nearEdge && seed % 241 === 0){
+        // Tree walls (more tree-like now)
+        drawTreeWall(px, py, wallNeighborsMask(x, y), seed);
+
+        // MORE houses (still decorative, on wall tiles so path isn't blocked)
+        // Increased density and not only near edges.
+        // Still keep them a bit rare so it doesn't get crowded.
+        const allowHouse = (seed % 97 === 0) || ((x < 6 || y < 6 || x > GRID-7 || y > GRID-7) && seed % 41 === 0);
+        if(allowHouse){
           drawHouse(px, py, seed % 2);
         }
       } else {
@@ -343,12 +421,12 @@ function draw(){
     }
   }
 
-  // goal
-  drawHeartSprite(goal.x * TILE, goal.y * TILE);
-
-  // player
+  // Goal: goth girl (bigger)
   const frame = Math.floor(animTick / 10);
-  drawPlayerSprite(player.x * TILE, player.y * TILE, frame);
+  drawGothGirlBig(goal.x, goal.y, frame);
+
+  // Player: bigger
+  drawPlayerSpriteBig(player.x, player.y, frame);
 }
 
 // ---------- Movement ----------
@@ -361,7 +439,7 @@ function tryMove(dx, dy){
   player.y = ny;
 
   if(player.x === goal.x && player.y === goal.y){
-    statusEl.textContent = "You found me! 💖";
+    statusEl.textContent = "You found me! 🖤";
     openWin();
   } else {
     statusEl.textContent = "…";
@@ -398,10 +476,10 @@ revealBtn.addEventListener("click", () => {
   codeBox.classList.remove("hidden");
 
   if(guess !== SECRET_PHRASE){
-    codeBox.textContent = "Nope 😈 try again.";
+    codeBox.textContent = "Nope! Try again.";
     return;
   }
-  codeBox.textContent = `Your KeyForge code: ${KEYFORGE_CODE}`;
+  codeBox.textContent = `Your reward: ${KEYFORGE_CODE}`;
 });
 
 closeBtn.addEventListener("click", () => winDialog.close());
