@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Find Me 💘</title>
+  <title>No Fun. Only Maze.</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +14,8 @@
 <body>
   <main class="wrap">
     <header class="top">
-      <h1>Find me in the maze!</h1>
-      <p class="sub">Arrow Keys / WASD • Reach ❤️ to win</p>
+      <h1>Brownie finder</h1>
+      <p class="sub">Arrow Keys / WASD • Reach the goth girl to win</p>
       <p class="sub">Brownie is somewhere ahead. She could have taken the direct route. She did not.</p>
     </header>
 
@@ -25,19 +25,35 @@
         <div class="hint">Tip: Hold <kbd>Shift</kbd> to dash</div>
       </div>
 
-      <!-- Full maze always visible -->
       <canvas id="game" width="656" height="656" aria-label="Maze game"></canvas>
 
       <div class="hud">
-        <div><strong>Legend:</strong> you = sprite • me = ❤️ • trees = walls</div>
-        <div id="status" class="status">Find me…</div>
+        <div><strong>Legend:</strong> you = sprite • goal = goth girl • trees = walls</div>
+        <div id="status" class="status">Waiting to start…</div>
       </div>
     </section>
 
+    <!-- START POPUP -->
+    <dialog id="startDialog">
+      <h2>Welcome!</h2>
+      <p>
+        This maze has been carefully designed with maximum inefficiency.
+        Success will result in access to Brownie.
+      </p>
+      <p>
+        Shortcuts are forbidden, failure will result in more maze. Complaints may be faxed and laminated
+        retroactively (and properly ignored)!
+      </p>
+      <div class="row">
+        <button id="startBtn" class="btn">Start</button>
+      </div>
+    </dialog>
+
+    <!-- WIN POPUP (existing) -->
     <dialog id="winDialog">
-      <h2>You found me!</h2>
-      <p>Type the secret phrase to reveal your Reward:</p>
-      <input id="phrase" type="text" placeholder="hint: something you like + important date for you" autocomplete="off" />
+      <h2>All done!</h2>
+      <p>Type the secret code to reveal your reward:</p>
+      <input id="phrase" type="text" placeholder="favorite body part + important date" autocomplete="off" />
       <div class="row">
         <button id="revealBtn" class="btn">Reveal code</button>
         <button id="closeBtn" class="btn secondary">Close</button>
@@ -46,7 +62,7 @@
     </dialog>
 
     <footer class="foot">
-      <small>Made with care + pixels.</small>
+      <small>Made with care + pixels</small>
     </footer>
   </main>
 
