@@ -1,31 +1,24 @@
 :root{
-  /* Pokémon Gen 3 / GBA outdoor palette */
-  --gb-dark: #1b2b1b;
-  --gb-shadow: #132013;
+  --bg0: #0b1610;
+  --bg1: #14281c;
 
-  --grass-a: #7ecf97;
-  --grass-b: #73c98f;
+  --panel: rgba(14, 32, 22, 0.72);
+  --border: #2f7a44;
 
-  --tree: #2b6f3f;
-  --tree-dark: #225b33;
+  --text: #eafff0;
+  --muted: #b7e5c7;
 
-  --ui-bg: rgba(15, 56, 15, 0.55);
-  --ui-border: #2f7a44;
-
-  --text-main: #e9fff1;
-  --text-muted: #b7e5c7;
+  --btnA: #8fd3a6;
+  --btnB: #6fbf90;
 }
 
-*{
-  box-sizing: border-box;
-}
+*{ box-sizing: border-box; }
 
 body{
   margin: 0;
-  background:
-    radial-gradient(900px 500px at 20% 10%, #203820, #0c150c);
-  color: var(--text-main);
-  font-family: "Press Start 2P", system-ui;
+  background: radial-gradient(900px 500px at 20% 10%, var(--bg1), var(--bg0));
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .wrap{
@@ -34,30 +27,29 @@ body{
   padding: 24px;
 }
 
-/* ───────── Header ───────── */
 .top h1{
   margin: 0 0 10px;
+  font-family: "Press Start 2P", system-ui;
   font-size: 22px;
-  letter-spacing: 1px;
-  color: var(--text-main);
+  letter-spacing: 0.5px;
   text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
 
 .sub{
   margin: 0 0 18px;
+  font-family: "Press Start 2P", system-ui;
   font-size: 10px;
   line-height: 1.6;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
-/* ───────── Panel / Game Container ───────── */
 .panel{
-  background: var(--ui-bg);
-  border: 4px solid var(--ui-border);
+  background: var(--panel);
+  border: 4px solid var(--border);
   border-radius: 14px;
   padding: 14px;
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.5),
+    0 20px 60px rgba(0,0,0,0.55),
     inset 0 0 0 2px rgba(255,255,255,0.05);
 }
 
@@ -69,97 +61,89 @@ body{
   margin-bottom: 12px;
 }
 
-/* ───────── Buttons ───────── */
 .btn{
   font-family: "Press Start 2P", system-ui;
   font-size: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  border: 3px solid var(--ui-border);
-  background: linear-gradient(#8fd3a6, #6fbf90);
+  border: 3px solid var(--border);
+  background: linear-gradient(var(--btnA), var(--btnB));
   color: #102510;
   cursor: pointer;
 }
-
-.btn:hover{
-  filter: brightness(1.05);
-}
-
+.btn:hover{ filter: brightness(1.05); }
 .btn.secondary{
   background: transparent;
-  color: var(--text-main);
+  color: var(--text);
 }
 
-/* ───────── Keyboard Hint ───────── */
 .hint{
+  font-family: "Press Start 2P", system-ui;
   font-size: 9px;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 kbd{
   padding: 2px 6px;
   border-radius: 6px;
-  border: 2px solid var(--ui-border);
+  border: 2px solid var(--border);
   background: rgba(255,255,255,0.08);
-  font-size: 9px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 10px;
 }
 
-/* ───────── CANVAS (IMPORTANT PART) ───────── */
+/* IMPORTANT: pixelated scaling */
 canvas{
   display: block;
   margin: 0 auto;
-
-  /* Scale up cleanly */
-  width: min(720px, 100%);
+  width: min(860px, 100%);
   height: auto;
 
-  border: 4px solid var(--ui-border);
+  border: 4px solid var(--border);
   border-radius: 12px;
-  background: var(--grass-a);
+  background: #7ecf97;
 
-  /* 🔥 CRITICAL FOR PIXEL ART 🔥 */
   image-rendering: pixelated;
-  image-rendering: crisp-edges;   /* Firefox */
+  image-rendering: crisp-edges;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast;
 
-  /* Prevent blur on transforms */
   transform: translateZ(0);
 }
 
-/* ───────── HUD ───────── */
 .hud{
   margin-top: 12px;
   display: flex;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+  font-family: "Press Start 2P", system-ui;
   font-size: 9px;
   line-height: 1.6;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
-.status{
-  color: var(--text-main);
-}
+.status{ color: var(--text); }
 
-/* ───────── Dialog / Win Screen ───────── */
 dialog{
-  border: 4px solid var(--ui-border);
+  border: 4px solid var(--border);
   background: #0c1f14;
-  color: var(--text-main);
+  color: var(--text);
   border-radius: 14px;
   padding: 16px;
   width: min(560px, 92vw);
 }
-
-dialog::backdrop{
-  background: rgba(0,0,0,0.65);
-}
+dialog::backdrop{ background: rgba(0,0,0,0.65); }
 
 dialog h2{
   margin: 0 0 10px;
+  font-family: "Press Start 2P", system-ui;
   font-size: 14px;
+}
+dialog p{
+  font-family: "Press Start 2P", system-ui;
+  font-size: 10px;
+  line-height: 1.6;
 }
 
 input{
@@ -167,9 +151,9 @@ input{
   margin-top: 10px;
   padding: 10px;
   border-radius: 10px;
-  border: 3px solid var(--ui-border);
+  border: 3px solid var(--border);
   background: rgba(255,255,255,0.08);
-  color: var(--text-main);
+  color: var(--text);
   font-family: "Press Start 2P", system-ui;
   font-size: 10px;
 }
@@ -181,30 +165,22 @@ input{
   margin-top: 12px;
 }
 
-/* ───────── Code Reveal Box ───────── */
 .code{
   margin-top: 12px;
   padding: 10px;
   border-radius: 12px;
-  border: 3px dashed var(--ui-border);
-  background: rgba(255,255,255,0.05);
-  font-size: 10px;
+  border: 3px dashed var(--border);
+  background: rgba(255,255,255,0.06);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 11px;
   line-height: 1.6;
 }
 
-.hidden{
-  display: none;
-}
+.hidden{ display: none; }
 
-/* ───────── Footer ───────── */
 .foot{
   margin-top: 14px;
+  color: var(--muted);
+  font-family: "Press Start 2P", system-ui;
   font-size: 9px;
-  color: var(--text-muted);
 }
-  border-radius: 12px;
-  background: rgba(155,188,15,.08);
-  font-size: 10px;
-  line-height: 1.6;
-}
-.hidden{ display:none; }
