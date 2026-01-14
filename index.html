@@ -14,35 +14,40 @@
 <body>
   <main class="wrap">
     <header class="top">
-      <h1>FIND ME 💘</h1>
-      <p class="sub">Arrow Keys / WASD • Reach the heart to win</p>
+      <h1>Find me in the maze!</h1>
+      <p class="sub">Arrow Keys / WASD • Reach ❤️ to win</p>
+      <p class="sub">Brownie is somewhere ahead. She could have taken the direct route. She did not.</p>
     </header>
 
     <section class="panel">
       <div class="toolbar">
-        <button id="newMazeBtn" class="btn">NEW MAZE</button>
-        <div class="hint">Hold <kbd>Shift</kbd> to dash</div>
+        <button id="newMazeBtn" class="btn">New Maze</button>
+        <div class="hint">Tip: Hold <kbd>Shift</kbd> to dash</div>
       </div>
 
-      <!-- Internal resolution is true Game Boy -->
-      <canvas id="game" width="160" height="144"></canvas>
+      <!-- Full maze always visible -->
+      <canvas id="game" width="656" height="656" aria-label="Maze game"></canvas>
 
       <div class="hud">
-        <div><strong>YOU</strong> = little sprite • <strong>ME</strong> = heart</div>
-        <div id="status" class="status">A WILD MAZE APPEARED!</div>
+        <div><strong>Legend:</strong> you = sprite • me = ❤️ • trees = walls</div>
+        <div id="status" class="status">Find me…</div>
       </div>
     </section>
 
     <dialog id="winDialog">
-      <h2>YOU FOUND ME 💖</h2>
-      <p>Type the secret phrase to reveal your KeyForge code:</p>
-      <input id="phrase" type="text" placeholder="e.g. i choose you" autocomplete="off" />
+      <h2>You found me!</h2>
+      <p>Type the secret phrase to reveal your Reward:</p>
+      <input id="phrase" type="text" placeholder="hint: something you like + important date for you" autocomplete="off" />
       <div class="row">
-        <button id="revealBtn" class="btn">REVEAL</button>
-        <button id="closeBtn" class="btn secondary">CLOSE</button>
+        <button id="revealBtn" class="btn">Reveal code</button>
+        <button id="closeBtn" class="btn secondary">Close</button>
       </div>
       <p id="codeBox" class="code hidden"></p>
     </dialog>
+
+    <footer class="foot">
+      <small>Made with care + pixels.</small>
+    </footer>
   </main>
 
   <script src="game.js"></script>
