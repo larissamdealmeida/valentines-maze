@@ -4,37 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Find Me 💘</title>
+
+  <!-- Pixel-ish font (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="wrap">
     <header class="top">
-      <h1>Find me in the maze 💘</h1>
-      <p class="sub">Move with Arrow Keys or WASD. Reach ❤️ to win.</p>
+      <h1>Find me in the maze <span class="spark">💘</span></h1>
+      <p class="sub">Move with Arrow Keys or WASD. Reach <span class="heart">❤️</span> to win.</p>
     </header>
 
     <section class="panel">
+      <div class="toolbar">
+        <button id="newMazeBtn" class="btn">New Maze</button>
+        <div class="hint">Tip: Hold <kbd>Shift</kbd> to move faster.</div>
+      </div>
+
       <canvas id="game" width="640" height="640" aria-label="Maze game"></canvas>
+
       <div class="hud">
-        <div><strong>Legend:</strong> 🧱 wall · 🟩 path · 🙂 you · ❤️ me</div>
+        <div><strong>Legend:</strong> 🙂 you · ❤️ me · 🌿 grass · 🟫 path</div>
         <div id="status" class="status">Good luck 😈</div>
       </div>
     </section>
 
     <dialog id="winDialog">
-      <h2>You found me! 🥹💖</h2>
-      <p>Type the secret phrase to reveal your KeyForge deck code:</p>
-      <input id="phrase" type="text" placeholder="e.g., I choose you" autocomplete="off" />
-      <button id="revealBtn">Reveal code</button>
-      <p id="codeBox" class="code hidden"></p>
-      <button id="closeBtn" class="secondary">Close</button>
-    </dialog>
-
-    <footer class="foot">
-      <small>Tip: If the maze is too hard, I can make it easier 😇</small>
-    </footer>
-  </main>
-
-  <script src="game.js"></script>
-</body>
-</html>
+      <h2>You found me! 💖</h2
