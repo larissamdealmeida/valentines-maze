@@ -1,61 +1,144 @@
-:root { --bg:#0b0f14; --card:#121826; --text:#e6edf3; --muted:#9aa4b2; }
-* { box-sizing: border-box; }
-body {
-  margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1200px 800px at 20% 10%, #1a2440, var(--bg));
-  color: var(--text);
-}
-.wrap { max-width: 900px; margin: 0 auto; padding: 24px; }
-.top h1 { margin: 0 0 6px; font-size: 32px; }
-.sub { margin: 0 0 18px; color: var(--muted); }
+:root{
+  --bg:#071017;
+  --card:#0b1823;
+  --text:#e6edf3;
+  --muted:#9fb2c7;
 
-.panel {
-  background: rgba(18,24,38,.9);
-  border: 1px solid rgba(255,255,255,.08);
+  /* Pokémon-ish palette */
+  --grass1:#2fa44f;
+  --grass2:#2b9348;
+  --path1:#b07a3a;
+  --path2:#9a6a33;
+  --tree1:#0a2a14;
+  --tree2:#0f3a1e;
+
+  --ui:#0f2433;
+  --ui2:#18354a;
+  --accent:#ffd34a;
+  --pink:#ff4d8d;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background: radial-gradient(1100px 700px at 20% 10%, #132b3e, var(--bg));
+  color:var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.wrap{ max-width: 980px; margin: 0 auto; padding: 24px; }
+
+.top h1{
+  margin:0 0 10px;
+  font-family: "Press Start 2P", system-ui;
+  font-size: 22px;
+  line-height: 1.25;
+  text-shadow: 0 2px 0 rgba(0,0,0,.35);
+}
+.sub{ margin:0 0 18px; color:var(--muted); }
+.spark{ filter: drop-shadow(0 2px 8px rgba(255,77,141,.25)); }
+.heart{ filter: drop-shadow(0 2px 8px rgba(255,77,141,.35)); }
+
+.panel{
+  background: rgba(11,24,35,.92);
+  border: 2px solid rgba(255,255,255,.10);
   border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 20px 70px rgba(0,0,0,.35);
+  padding: 14px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
 }
-canvas { width: 100%; height: auto; border-radius: 14px; display:block; }
-.hud { margin-top: 10px; display:flex; gap: 14px; flex-wrap: wrap; align-items:center; }
-.status { color: #ffd479; }
 
-dialog {
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.btn{
+  font-family: "Press Start 2P", system-ui;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,.12);
+  background: linear-gradient(180deg, var(--ui2), var(--ui));
+  color: var(--text);
+  cursor:pointer;
+}
+.btn:hover{ border-color: rgba(255,255,255,.22); }
+.btn.secondary{
+  background: rgba(255,255,255,.06);
+}
+
+.hint{
+  color: var(--muted);
+  font-size: 13px;
+}
+kbd{
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.12);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+}
+
+canvas{
+  width: 100%;
+  height: auto;
+  display:block;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,.08);
+
+  /* This is key for “pixel art” crispness */
+  image-rendering: pixelated;
+}
+
+.hud{
+  margin-top: 10px;
+  display:flex;
+  justify-content:space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items:center;
+}
+.status{ color: var(--accent); }
+
+dialog{
+  border: 2px solid rgba(255,255,255,.12);
   border-radius: 16px;
   padding: 18px;
   background: var(--card);
   color: var(--text);
-  width: min(520px, 92vw);
+  width: min(560px, 92vw);
 }
-dialog::backdrop { background: rgba(0,0,0,.65); }
-input {
-  width: 100%;
-  margin: 10px 0;
+dialog::backdrop{ background: rgba(0,0,0,.65); }
+dialog h2{
+  margin: 0 0 10px;
+  font-family: "Press Start 2P", system-ui;
+  font-size: 16px;
+}
+input{
+  width:100%;
+  margin: 10px 0 12px;
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.14);
+  border: 2px solid rgba(255,255,255,.10);
   background: rgba(255,255,255,.06);
   color: var(--text);
 }
-button {
-  padding: 10px 12px;
-  border: 0;
-  border-radius: 12px;
-  background: #ff4d8d;
-  color: #0b0f14;
-  font-weight: 700;
-  cursor: pointer;
-  margin-right: 8px;
-}
-button.secondary { background: rgba(255,255,255,.12); color: var(--text); }
-.code {
-  margin-top: 10px;
+.row{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+.code{
+  margin-top: 12px;
   padding: 10px 12px;
   border-radius: 12px;
   background: rgba(0,0,0,.35);
-  border: 1px dashed rgba(255,255,255,.25);
+  border: 2px dashed rgba(255,255,255,.20);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
-.hidden { display:none; }
-.foot { margin-top: 14px; color: var(--muted); }
+.hidden{ display:none; }
+.tiny{ color: var(--muted); font-size: 12px; margin: 12px 0 0; }
+
+.foot{ margin-top: 14px; color: var(--muted); }
