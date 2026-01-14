@@ -1,0 +1,61 @@
+:root { --bg:#0b0f14; --card:#121826; --text:#e6edf3; --muted:#9aa4b2; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: radial-gradient(1200px 800px at 20% 10%, #1a2440, var(--bg));
+  color: var(--text);
+}
+.wrap { max-width: 900px; margin: 0 auto; padding: 24px; }
+.top h1 { margin: 0 0 6px; font-size: 32px; }
+.sub { margin: 0 0 18px; color: var(--muted); }
+
+.panel {
+  background: rgba(18,24,38,.9);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 20px 70px rgba(0,0,0,.35);
+}
+canvas { width: 100%; height: auto; border-radius: 14px; display:block; }
+.hud { margin-top: 10px; display:flex; gap: 14px; flex-wrap: wrap; align-items:center; }
+.status { color: #ffd479; }
+
+dialog {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 18px;
+  background: var(--card);
+  color: var(--text);
+  width: min(520px, 92vw);
+}
+dialog::backdrop { background: rgba(0,0,0,.65); }
+input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+}
+button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #ff4d8d;
+  color: #0b0f14;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 8px;
+}
+button.secondary { background: rgba(255,255,255,.12); color: var(--text); }
+.code {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.35);
+  border: 1px dashed rgba(255,255,255,.25);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+.hidden { display:none; }
+.foot { margin-top: 14px; color: var(--muted); }
