@@ -14,7 +14,7 @@ const startDialog = document.getElementById("startDialog");
 const startBtn = document.getElementById("startBtn");
 
 // Put your real KeyForge code here:
-const KEYFORGE_CODE = "PASTE-YOUR-REAL-CODE-HERE";
+const KEYFORGE_CODE = "3G28C-JFP5W-*****";
 const SECRET_PHRASE = "feet420";
 const WRONG_MESSAGES = [
   "Nope! Pro tip: enter the Correct Code.",
